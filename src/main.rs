@@ -33,6 +33,13 @@ static V1_PROVIDER: Mutex<Lazy<ProviderInstance>> =
 #[cfg(test)]
 mod tests;
 
+#[get("/servers.json")]
+async fn servers_json() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(r#"{"servers":[{"name":"my-anisette","address":"https://mw-sette-server.onrender.com"}]}"#)
+}
+
 #[get("/")]
 #[allow(clippy::await_holding_lock)]
 async fn index() -> impl Responder {
@@ -267,6 +274,7 @@ async fn main() -> std::io::Result<()> {
                     ))
                     .add(("Cross-Origin-Resource-Policy", "same-site")),
             )
+            .service(servers_json)
             .service(index)
             .service(client_info)
             .service(provisioning_session_ws)
